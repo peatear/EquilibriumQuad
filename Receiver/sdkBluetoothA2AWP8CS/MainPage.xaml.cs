@@ -43,7 +43,7 @@ namespace sdkBluetoothA2AWP8CS
        flightbox mflightbox;
         btConManager mConManager;
 
-
+        bool connected = false;
        
 
         float roll;
@@ -97,7 +97,7 @@ namespace sdkBluetoothA2AWP8CS
             //timer.Tick += new EventHandler(timer_Tick);
             //timer.Start();
             mthrottle = 0;
-
+            
         }
 
      
@@ -161,13 +161,16 @@ namespace sdkBluetoothA2AWP8CS
             {
                 _socket = await PeerFinder.ConnectAsync(peer);
 
+                if (_dataReader == null)
+                    _dataReader = new DataReader(_socket.InputStream);
+
                 // We can preserve battery by not advertising our presence.
                 PeerFinder.Stop();
 
                 _peerName = peer.DisplayName;
                 //UpdateChatBox(AppResources.Msg_ChatStarted, true);
 
-                // Since this is a chat, messages can be incoming and outgoing. 
+                connected = true;
                 // Listen for incoming messages.
                 ListenForIncomingMessage();
             }
@@ -184,43 +187,37 @@ namespace sdkBluetoothA2AWP8CS
         private DataReader _dataReader;
         private async void ListenForIncomingMessage()
         {
-            try
-            {
+           // try
+           // {
                 int message = await GetMessage();
 
                 // Add to chat
                 //UpdateChatBox(message, true);
                 mflightbox.throttle(message);
-                throttleText.Text = "Throttle: "+message;
+                //throttleText.Text = "Throttle: "+message;
                 // Start listening for the next message.
                 ListenForIncomingMessage();
-            }
-            catch (Exception)
-            {
+          //  }
+           // catch (Exception)
+           // {
                 //UpdateChatBox(AppResources.Msg_ChatEnded, true);
 
-            }
+           // }
         }
 
 
 
         private async Task<int> GetMessage()
         {
-            if (_dataReader == null)
-                _dataReader = new DataReader(_socket.InputStream);
+           // if (_dataReader == null)
+            //    _dataReader = new DataReader(_socket.InputStream);
 
-            // Each message is sent in two blocks.
-            // The first is the size of the message.
-            // The second if the message itself.
-            //var len = await GetMessageSize();
-            await _dataReader.LoadAsync(4);
+            await _dataReader.LoadAsync(2);
             
 
-            return _dataReader.ReadInt32();
-            //uint messageLen = (uint)_dataReader.ReadInt32();
-           // await _dataReader.LoadAsync(messageLen);
-            //return _dataReader.ReadString(messageLen);
-            
+            return _dataReader.ReadInt16();
+
+         
         }
 
         private void FindPeers_Tap(object sender, GestureEventArgs e)
@@ -293,16 +290,19 @@ namespace sdkBluetoothA2AWP8CS
             connectionSettingsTask.Show();
         }
 
-            void motion_CurrentValueChanged(object sender, SensorReadingEventArgs<MotionReading> e)
+        void motion_CurrentValueChanged(object sender, SensorReadingEventArgs<MotionReading> e)
         {
 
             float[] attitude = new float[3];
+
+
             attitude[0]=e.SensorReading.Attitude.Roll;
             attitude[1]=e.SensorReading.Attitude.Pitch;
             
             motors=mflightbox.compensate(attitude);
 
             mConManager.SendCommand(motors);
+            
             Dispatcher.BeginInvoke(() =>
             {
 
@@ -393,7 +393,7 @@ namespace sdkBluetoothA2AWP8CS
 
         void fb_inclineEvent(float[] data)
         {
-
+            
             Dispatcher.BeginInvoke(() =>
             {
                 roll = data[0];

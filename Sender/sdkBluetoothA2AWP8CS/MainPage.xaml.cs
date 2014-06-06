@@ -45,27 +45,9 @@ namespace sdkBluetoothA2AWP8CS
             //SystemTray.SetProgressIndicator(this, new ProgressIndicator());
 
             this.DataContext = "Sender";
-            init();
-        }
-
-        void init()
-        {
-            // Maintain a list of peers and bind that list to the UI
-            _peerApps = new ObservableCollection<PeerAppInfo>();
-            PeerList.ItemsSource = _peerApps;
-
-            // Register for incoming connection requests
-            PeerFinder.ConnectionRequested += PeerFinder_ConnectionRequested;
-
-            // Start advertising ourselves so that our peers can find us
-            PeerFinder.DisplayName = "Sender";
-            PeerFinder.Start();
-
-            RefreshPeerAppList();
-
-            //base.OnNavigatedTo(e);
 
         }
+
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             // Maintain a list of peers and bind that list to the UI
@@ -221,7 +203,7 @@ namespace sdkBluetoothA2AWP8CS
         DataWriter _dataWriter;
 
 
-        private async void SendMessage(int message)
+        private async void SendMessage(Int16 message)
         {
             /*if (message.Trim().Length == 0)
             {
@@ -238,10 +220,8 @@ namespace sdkBluetoothA2AWP8CS
             if (_dataWriter == null)
                 _dataWriter = new DataWriter(_socket.OutputStream);
 
-            // Each message is sent in two blocks.
-            // The first is the size of the message.
-            // The second if the message itself.
-            _dataWriter.WriteInt32(message);
+           //send int
+            _dataWriter.WriteInt16(message);
             await _dataWriter.StoreAsync();
 
            // _dataWriter.WriteString(message);
@@ -259,7 +239,7 @@ namespace sdkBluetoothA2AWP8CS
         {
             if (connected)
             {
-                SendMessage((int)e.NewValue);
+                SendMessage((Int16)e.NewValue);
             }
             else
             {
