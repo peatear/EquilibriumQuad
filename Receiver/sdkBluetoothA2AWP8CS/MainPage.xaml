@@ -45,7 +45,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Content="Find" x:Name="FindPeers" Tap="FindPeers_Tap" Margin="315,354,0,0" Height="75" VerticalAlignment="Top"/>
+            <Button Grid.Row="0" Content="Find" x:Name="FindPeers" Tap="FindPeers_Tap" Margin="315,354,11,0" Height="75" VerticalAlignment="Top"/>
             <TextBlock Grid.Row="1" x:Name="tbPeerList" Margin="25,0,0,0"/>
             <ListBox Grid.Row="2" Grid.ColumnSpan="2" x:Name="PeerList" Margin="10,10,0,10">
                 <ListBox.ItemTemplate>
@@ -54,11 +54,10 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Button Content="Connect" x:Name="ConnectToSelected" Tap="ConnectToSelected_Tap_1" Margin="300,0,0,127" Height="78" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="145"/>
+            <Button Content="Connect" x:Name="ConnectToSelected" Tap="ConnectToSelected_Tap_1" Margin="315,0,0,127" Height="78" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="130"/>
             <ScrollViewer x:Name="svChatBox" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="10,10,105,0" Height="26" VerticalAlignment="Top" Grid.Row="6">
                 <TextBlock  x:Name="tbChat" FontSize="{StaticResource PhoneFontSizeSmall}" TextWrapping="Wrap" Width="193" Height="273" />
             </ScrollViewer>
-            <TextBlock x:Name="throttleText" HorizontalAlignment="Left" Margin="0,62,0,0" Grid.Row="6" TextWrapping="Wrap" Text="Throttle: " VerticalAlignment="Top" Width="408" Height="64"/>
             <TextBlock HorizontalAlignment="Left" Margin="34,102,0,0" TextWrapping="Wrap" Text="roll" VerticalAlignment="Top"/>
             <TextBlock HorizontalAlignment="Left" Margin="18,134,0,0" TextWrapping="Wrap" Text="pitch" VerticalAlignment="Top" RenderTransformOrigin="0.45,0.804"/>
             <TextBlock HorizontalAlignment="Left" Margin="28,166,0,0" TextWrapping="Wrap" Text="yaw" VerticalAlignment="Top"/>
