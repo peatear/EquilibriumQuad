@@ -25,6 +25,8 @@ using Windows.Storage.Streams;
 using kuntakinte;
 using System.Windows.Threading;
 using Microsoft.Devices.Sensors;
+using libfilter;
+using BluetoothConnectionManager;
 
 namespace sdkBluetoothA2AWP8CS
 {
@@ -34,18 +36,18 @@ namespace sdkBluetoothA2AWP8CS
         StreamSocket _socket;                           // The socket object used to communicate with a peer
         string _peerName = string.Empty;                // The name of the current peer
 
-     
-        // Error code constants
-        const uint ERR_BLUETOOTH_OFF = 0x8007048F;      // The Bluetooth radio is off
-        const uint ERR_MISSING_CAPS = 0x80070005;       // A capability is missing from your WMAppManifest.xml
-        const uint ERR_NOT_ADVERTISING = 0x8000000E;    // You are currently not advertising your presence using PeerFinder.Start()
-
        flightbox mflightbox;
         btConManager mConManager;
 
         bool connected = false;
-       
 
+        short rollrate;
+        short pitchrate;
+        short yawrate;
+
+        float myPgain = 0;
+        float myIgain = 0;
+        float myDgain = 0;
         float roll;
         float pitch;
         float yaw;
@@ -55,48 +57,50 @@ namespace sdkBluetoothA2AWP8CS
         //timer
         DispatcherTimer timer;
 
-        Motion motion;
 
+        Motion motion;
+        FilterDesign filterDesigner = null;
+        Filter myfilter = null;
+
+        float[] mImpulseResponse;
         //throttle
         float mthrottle;
-
+        float throttle = 0;
         // Constructor
         public MainPage()
         {
             InitializeComponent();
 
-            //SystemTray.SetProgressIndicator(this, new ProgressIndicator());
-
-            this.DataContext = "Receivers";
-            //init();
-            motors = new float[4];
-
             //new bluetooth manager
             mConManager = new btConManager();
 
+            
+            
+            //set up filter object
+            filterDesigner = new FilterDesign();
+            mImpulseResponse = filterDesigner.FIRDesignWindowed((float)0.0, (float)0.6,WindowType.HAMMING);
+            //mflightbox = new flightbox(); // initialize a new flightbox
+            myfilter = new Filter(mImpulseResponse);
 
-            mflightbox = new flightbox(); // initialize a new flightbox
-
-
-            mflightbox.inclineEvent += fb_inclineEvent;
+            //mflightbox.inclineEvent += fb_inclineEvent;
 
             //mflightbox.motorEvent += mflightbox_motorEvent;
+            
             motion = new Motion();
-            motion.TimeBetweenUpdates = TimeSpan.FromMilliseconds(5);
+            motion.TimeBetweenUpdates = TimeSpan.FromMilliseconds(10);
             motion.CurrentValueChanged += new EventHandler<SensorReadingEventArgs<MotionReading>>(motion_CurrentValueChanged);
-
-
-            motion.Start();
+            
 
             mConManager.Initialize();
 
+            motion.Start();
 
-
-            //timer = new DispatcherTimer();
-            //timer.Interval = TimeSpan.FromSeconds(2);
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(5);
             //timer.Tick += new EventHandler(timer_Tick);
             //timer.Start();
             mthrottle = 0;
+
             
         }
 
@@ -189,11 +193,11 @@ namespace sdkBluetoothA2AWP8CS
         {
            // try
            // {
-                int message = await GetMessage();
-
+                throttle = await GetMessage();
+                
                 // Add to chat
                 //UpdateChatBox(message, true);
-                mflightbox.throttle(message);
+                //mflightbox.throttle(message);
                 //throttleText.Text = "Throttle: "+message;
                 // Start listening for the next message.
                 ListenForIncomingMessage();
@@ -281,16 +285,24 @@ namespace sdkBluetoothA2AWP8CS
         }
 
         
-
-
-        private void ShowBluetoothControlPanel()
+        void motion_CurrentValueChanged(object sender, SensorReadingEventArgs<MotionReading> e)
         {
-            ConnectionSettingsTask connectionSettingsTask = new ConnectionSettingsTask();
-            connectionSettingsTask.ConnectionSettingsType = ConnectionSettingsType.Bluetooth;
-            connectionSettingsTask.Show();
+            mConManager.SendCommand(e.SensorReading.Attitude.Roll*1000,e.SensorReading.Attitude.Pitch * 1000, throttle);
+            Dispatcher.BeginInvoke(() =>
+            {
+                //await mConManager.SendCommand(e.SensorReading.Attitude.Pitch * 1000);
+                //rollTextBlock.Text = foo.ToString("f4");
+               // pitchTextBlock.Text = (e.SensorReading.Attitude.Pitch).ToString("f5");
+               // rollTextBlock.Text = e.SensorReading.DeviceRotationRate.X.ToString("f5");
+
+                pitchTextBlock.Text = e.SensorReading.Attitude.Roll +"";
+                rollTextBlock.Text = e.SensorReading.Attitude.Pitch  + "";
+                throttletext.Text = "throttle: " + throttle;
+            });
         }
 
-        void motion_CurrentValueChanged(object sender, SensorReadingEventArgs<MotionReading> e)
+
+        /*void motion_CurrentValueChanged(object sender, SensorReadingEventArgs<MotionReading> e)
         {
 
             float[] attitude = new float[3];
@@ -317,28 +329,23 @@ namespace sdkBluetoothA2AWP8CS
             });
             
 
-        }
+        }*/
 
         void mflightbox_motorEvent(float[] data)
         {
             //throw new NotImplementedException();
             //updateMotorDrive(data);
             
-           
+            
+            rollrate = Convert.ToInt16(data[0]);
+            pitchrate = Convert.ToInt16(data[1]);
+
+            
             Dispatcher.BeginInvoke(() =>
             {
-
-                
-                motor0.Text = data[0].ToString();
-                motor1.Text = data[1].ToString();
-                motor2.Text = data[2].ToString();
-                motor3.Text = data[3].ToString();
-
-                //updateMotorDrive(data);
+                //rollrateindicator.Text = rollrate.ToString();
+                //pitchrateindicator.Text = pitchrate.ToString();
             });
-            
-
-            
            
         }
 

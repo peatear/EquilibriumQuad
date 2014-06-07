@@ -55,9 +55,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             <Button Content="Connect" x:Name="ConnectToSelected" Tap="ConnectToSelected_Tap_1" Margin="315,0,0,127" Height="78" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="130"/>
-            <ScrollViewer x:Name="svChatBox" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="10,10,105,0" Height="26" VerticalAlignment="Top" Grid.Row="6">
-                <TextBlock  x:Name="tbChat" FontSize="{StaticResource PhoneFontSizeSmall}" TextWrapping="Wrap" Width="193" Height="273" />
-            </ScrollViewer>
+            <ScrollViewer x:Name="svChatBox" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="10,114,105,0" Height="26" VerticalAlignment="Top" Grid.Row="6"/>
             <TextBlock HorizontalAlignment="Left" Margin="34,102,0,0" TextWrapping="Wrap" Text="roll" VerticalAlignment="Top"/>
             <TextBlock HorizontalAlignment="Left" Margin="18,134,0,0" TextWrapping="Wrap" Text="pitch" VerticalAlignment="Top" RenderTransformOrigin="0.45,0.804"/>
             <TextBlock HorizontalAlignment="Left" Margin="28,166,0,0" TextWrapping="Wrap" Text="yaw" VerticalAlignment="Top"/>
@@ -86,6 +84,7 @@
             <TextBlock HorizontalAlignment="Left" Margin="163,264,0,0" TextWrapping="Wrap" Text="P" VerticalAlignment="Top" Width="27"/>
             <TextBlock HorizontalAlignment="Left" Margin="163,341,0,0" TextWrapping="Wrap" Text="I" VerticalAlignment="Top" Width="27"/>
             <TextBlock HorizontalAlignment="Left" Margin="163,413,0,0" TextWrapping="Wrap" Text="D" VerticalAlignment="Top" Width="27"/>
+            <TextBlock x:Name="throttletext" TextWrapping="Wrap" Text="rollrate" RenderTransformOrigin="-0.536,0.554" Margin="92,198,261,235"/>
 
         </Grid>
     </Grid>

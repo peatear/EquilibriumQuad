@@ -157,6 +157,10 @@
       <Project>{F60304A6-1412-466E-B954-B667812AAF4E}</Project>
       <Name>kuntakinte</Name>
     </ProjectReference>
+    <ProjectReference Include="..\libfilter\libfilter.vcxproj">
+      <Project>{61C0ECEE-0829-4E3D-AC1E-0B6BF3CDB803}</Project>
+      <Name>libfilter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
